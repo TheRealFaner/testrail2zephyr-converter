@@ -1,33 +1,35 @@
+var file;
+
 function handleFileSelect(event) {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-  
-    reader.onload = function(e) {
-        const xmlString = e.target.result;
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-        const jsonString = xml2json(xmlDoc,'');
-        //console.log(jsonString);
-        const csvData = createCsvData(jsonString[1]);
-        const textareaElement = document.getElementById('textArea');
-        textareaElement.value = csvData;
+  file = event.target.files[0];
+}
 
-        const textareaJsonElement = document.getElementById('textAreaJson');
-        textareaJsonElement.value = jsonString[1];
+function convert(mode) {
+  const reader = new FileReader();
 
-        downloadCSV(csvData,"converted_test_suite")
-    }
-    
-    reader.readAsText(file);
+  reader.onload = function(e) {
+      const xmlString = e.target.result;
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+      const jsonString = xml2json(xmlDoc,'');
+      //console.log(jsonString);
+      var data = "";
+      if (mode == 'csv') {
+        data = createCsvData(jsonString[1]);
+        downloadFile(data,"converted_test_suite",mode);
+      }
+      else if (mode == 'xml') {
+        data = createXmlData(jsonString[1]);
+        downloadFile(data,"converted_test_suite",mode);
+      }
+      const textareaElement = document.getElementById('textArea');
+      textareaElement.value = data;
+
+      const textareaJsonElement = document.getElementById('textAreaJson');
+      textareaJsonElement.value = jsonString[1];
+
+      
   }
   
-  function handleButtonClick() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'text/xml';
-  
-    input.onchange = handleFileSelect;
-  
-    input.click();
-  }
-  
+  reader.readAsText(file);
+}

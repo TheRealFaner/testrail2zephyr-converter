@@ -10,10 +10,23 @@
   <script src="src/main.js"></script>
 </head>
 <body>
-  <h1>Заголовок страницы</h1>
+  <h1>Преобразование XML файла экспорта suite из TestRail в форматы Zephyr Jira</h1>
   <p><span id="infoSpan"></span></p>
-  <input type="button" onclick="handleButtonClick()" value="Выбрать XML файл">
-  <div><textarea id="textArea" name="csvText"></textarea></div>
-  <div><textarea id="textAreaJson" name="jsonText"></textarea></div>
+  <input type="file" accept="text/xml"onchange="handleFileSelect(event, 'csv')">
+  <div>
+    <input type="button" onclick="convert('csv')" value="Преобразовать в CSV" >
+    <input type="button" onclick="convert('xml')" value="Преобразовать в XML (Zephyr Scale)" >
+  </div>
+  
+  <div>
+    <div>
+      <span>Данные CSV</span>
+      <textarea id="textArea" name="csvText"></textarea>
+    </div>
+    <div>
+      <span>Данные JSON</span>
+      <textarea id="textAreaJson" name="jsonText"></textarea>
+    </div>
+  </div>
 </body>
 </html>

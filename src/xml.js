@@ -10,6 +10,7 @@ function createXmlData(jsonString) {
 
     const testCaseTemplate = `{
         "folder": "",
+        "issues": [],
         "labels": [],
         "name": "",
         "objective": "",
@@ -58,15 +59,25 @@ function createXmlData(jsonString) {
                 caseObj.labels.push(c.type);
                 caseObj.name = c.title;
                 caseObj.priority = c.priority;
+                caseObj.precondition = c.custom.preconds ? c.custom.preconds : ( 
+                    section.description ? section.description : "");
+                if (c.references) {
+                    caseObj.issues = c.references.replaceAll(" ","").split(',');
+                }
             
             if (c.custom.steps_separated) {
                 c.custom.steps_separated.step = putDataArrayIfDataNotArray(c.custom.steps_separated.step);
             } else {
                 c.custom.steps_separated = { "step": [] };
-                caseObj.precondition = c.custom.preconds ? c.custom.preconds.replaceAll("\"", "\\\"") : ( 
-                    section.description ? section.description.replaceAll("\"", "\\\"") : "");
+                if (c.custom.steps) {
+                    c.custom.steps_separated.step.push({
+                        "index": 1,
+                        "content": c.custom.steps,
+                        "expected": c.custom.expected
+                    });
+                }   
             };
-
+            
             c.custom.steps_separated.step.forEach((step, index) => {
                 var stepObj = JSON.parse(stepTemplate);
                 stepObj.index = index;
@@ -95,6 +106,15 @@ function createXmlData(jsonString) {
         var testCaseElement = xmlDocument.createElement('testCase');
             var testCaseFolderElement = createElementWithData(xmlDocument, 'folder', testCase.folder); 
         testCaseElement.appendChild(testCaseFolderElement);
+
+        var testCaseIssues = xmlDocument.createElement('issues');
+        testCase.issues.forEach(issue => {
+            var testCaseIssuesIssue = xmlDocument.createElement('issue');
+                var testCaseIssuesIssueKey = createElementWithData(xmlDocument, 'key', issue); 
+            testCaseIssuesIssue.appendChild(testCaseIssuesIssueKey);
+            testCaseIssues.appendChild(testCaseIssuesIssue);
+        });
+        testCaseElement.appendChild(testCaseIssues);
 
         var testCaseLabelsElement = xmlDocument.createElement('labels');
         testCase.labels.forEach(label => {

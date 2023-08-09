@@ -30,15 +30,26 @@ function createCsvData(jsonString) {
             
             if (c.custom.steps_separated) {
                 c.custom.steps_separated.step = putDataArrayIfDataNotArray(c.custom.steps_separated.step);
-            } else {c.custom.steps_separated = { "step": [{
-                "title": c.title.replaceAll("\"", "\\\""), 
-                "type": c.type,
-                "priority": c.priority,
-                "preconds": c.custom.preconds ? c.custom.preconds.replaceAll("\"", "\\\"") : ( 
-                        section.description ? section.description.replaceAll("\"", "\\\"") : ""),
-                "expected": "", 
-                "content": ""
-            }] } };
+            } else {
+                c.custom.steps_separated = { "step": [] };
+                if (c.custom.steps) {
+                    c.custom.steps_separated.step.push({
+                        "index": 1,
+                        "content": c.custom.steps,
+                        "expected": c.custom.expected
+                    });
+                } else {
+                    c.custom.steps_separated.step.push({
+                        "title": c.title.replaceAll("\"", "\\\""), 
+                        "type": c.type,
+                        "priority": c.priority,
+                        "preconds": c.custom.preconds ? c.custom.preconds.replaceAll("\"", "\\\"") : ( 
+                                section.description ? section.description.replaceAll("\"", "\\\"") : ""),
+                        "expected": "", 
+                        "content": ""
+                    });
+                }
+            };
 
             c.custom.steps_separated.step.forEach(step => {
                 if (isFirstRowOfCase) {
